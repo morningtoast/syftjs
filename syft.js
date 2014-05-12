@@ -182,9 +182,6 @@ var Syft = {
 		var nonmatch = [];
 		var self     = this;
 		_.each(this.results, function(v,k) {
-
-console.log(self._checkRange(v[attribute], min, max, inclusive));
-
 			if (!self._checkRange(v[attribute], min, max, inclusive)) {
 				nonmatch.push(k);
 			}
