@@ -1,0 +1,81 @@
+<html>
+<head>
+	<style>li { padding-bottom:5px; }</style>
+	<script src="http://cdnjs.cloudflare.com/ajax/libs/underscore.js/1.6.0/underscore.js"></script>
+	<script src="syft.js"></script>
+	<script>
+		// Example of local JSON dataset
+		var localData = [{"id":0,"balance":2072,"age":33,"name":"Garrett Chan","gender":"male","states":["New Jersey","Arkansas","North Dakota","Colorado","Kansas","West Virginia","Utah"]},{"id":1,"balance":1208,"age":38,"name":"Lena Wells","gender":"female","states":["Alaska","South Carolina","Tennessee","New Hampshire","Virginia","Arizona","Delaware"]},{"id":2,"balance":2616,"age":40,"name":"Alana Sparks","gender":"female","states":["Nebraska","Washington","Texas","Kentucky","Alabama","Louisiana","North Carolina"]},{"id":3,"balance":2636,"age":35,"name":"Alford Briggs","gender":"male","states":["Mississippi","Wyoming","Massachusetts","Connecticut","South Dakota","Indiana","Oregon"]},{"id":4,"balance":2250,"age":32,"name":"Kari Carpenter","gender":"female","states":["Minnesota","Ohio","Pennsylvania","Georgia","Hawaii","Florida","Oklahoma"]},{"id":5,"balance":3499,"age":34,"name":"Rollins Klein","gender":"male","states":["Maryland","Montana","Iowa","Vermont","Missouri","Rhode Island","New Mexico"]},{"id":6,"balance":240,"age":33,"name":"Lawanda Johnson","gender":"female","states":["New York","Maine","Michigan","Wisconsin","California","Idaho","Nevada"]},{"id":7,"balance":2660,"age":26,"name":"Alston Lambert","gender":"male","states":["New Jersey","Arkansas","North Dakota","Colorado","Kansas","West Virginia","Utah"]},{"id":8,"balance":1108,"age":23,"name":"Parker Dennis","gender":"male","states":["Alaska","South Carolina","Tennessee","New Hampshire","Virginia","Arizona","Delaware"]},{"id":9,"balance":743,"age":36,"name":"Warren Cook","gender":"male","states":["Nebraska","Washington","Texas","Kentucky","Alabama","Louisiana","North Carolina"]},{"id":10,"balance":348,"age":20,"name":"Kemp Hoover","gender":"male","states":["Mississippi","Wyoming","Massachusetts","Connecticut","South Dakota","Indiana","Oregon"]},{"id":11,"balance":1503,"age":35,"name":"Tisha Smith","gender":"female","states":["Minnesota","Ohio","Pennsylvania","Georgia","Hawaii","Florida","Oklahoma"]},{"id":12,"balance":2905,"age":35,"name":"Cardenas Vargas","gender":"male","states":["Maryland","Montana","Iowa","Vermont","Missouri","Rhode Island","New Mexico"]},{"id":13,"balance":1040,"age":37,"name":"Sophie Fischer","gender":"female","states":["New York","Maine","Michigan","Wisconsin","California","Idaho","Nevada"]},{"id":14,"balance":1887,"age":21,"name":"Ofelia Jennings","gender":"female","states":["New Jersey","Arkansas","North Dakota","Colorado","Kansas","West Virginia","Utah"]},{"id":15,"balance":3823,"age":30,"name":"Rosales Jefferson","gender":"male","states":["Alaska","South Carolina","Tennessee","New Hampshire","Virginia","Arizona","Delaware"]},{"id":16,"balance":2872,"age":24,"name":"Constance Clemons","gender":"female","states":["Nebraska","Washington","Texas","Kentucky","Alabama","Louisiana","North Carolina"]},{"id":17,"balance":3541,"age":25,"name":"Emma Battle","gender":"female","states":["Mississippi","Wyoming","Massachusetts","Connecticut","South Dakota","Indiana","Oregon"]},{"id":18,"balance":1224,"age":21,"name":"Dickson Mcconnell","gender":"male","states":["Minnesota","Ohio","Pennsylvania","Georgia","Hawaii","Florida","Oklahoma"]},{"id":19,"balance":698,"age":32,"name":"Claudette Gilliam","gender":"female","states":["Maryland","Montana","Iowa","Vermont","Missouri","Rhode Island","New Mexico"]}];
+
+		function el(id) { return(document.getElementById(id)); }
+
+		function showResults() {
+			var el_results = el("result");
+
+			el_results.innerHTML = "";
+
+			_.each(Syft.results, function(v,k) {
+				el_results.innerHTML += "<li>"+v["name"]+": "+v["balance"]+"<br /><small>"+v["states"].join()+"</small></li>"; 
+			});
+		}
+	
+
+		function filterContains() {
+			Syft.new();
+			Syft.contains("states", el("find-state").value);
+			Syft.sort("name");
+			showResults();
+		}
+
+		function filterRange() {
+			Syft.new();
+			Syft.range("balance", el("balance-min").value, el("balance-max").value);
+			Syft.rsort("balance");
+			showResults();
+		}
+
+		function filterAll() {
+			Syft.new();
+			Syft.contains("states", el("find-state").value);
+			Syft.range("balance", el("balance-min").value, el("balance-max").value);
+			Syft.sort("name");
+			showResults();
+		}
+
+
+		// Onready will load dataset before any filters are applied
+		document.addEventListener('DOMContentLoaded', function() {
+			Syft.load("people.json", function() {
+
+				// This spits out raw data block for demo only
+				// You don't need a callback with load() unless you are showing results on initial view
+				_.each(Syft.results, function(v,k) { 
+					el("raw").innerHTML += v["name"]+"\t\t"+v["balance"]+"\t"+v["states"].join()+"\n"; 
+				});
+			});
+		});
+
+	</script>
+</head>
+<body>
+	<h1>Syft Example</h1>
+	<fieldset>
+		<legend>Filters and Search</legend>
+		<p>
+			State<br />
+			<input type="text" id="find-state" value="ohio" size="10" /> <button type="button" onclick="filterContains()">Filter</button>
+		</p>
+		<p>
+			Balance<br />
+			<input type="text" id="balance-min" value="0" size="3" /> to <input type="text" id="balance-max" value="1600" size="3" /> <button type="button" onclick="filterRange()">Filter</button>
+		</p>
+		<p>
+			<button type="button" onclick="filterAll()">Combine both filters (AND)</button>
+		</p>
+	</fieldset>
+	<ul id="result"><li><em>Filtered results will display here</em></ul>
+	<h2>Raw data</h2>
+	<p>This is the raw dataset for comparison</p>
+	<pre id="raw" style="background-color:#efefef;color:#333;"></pre>
+</body>
+</html>
